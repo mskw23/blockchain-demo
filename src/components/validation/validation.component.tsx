@@ -61,7 +61,7 @@ export function ValidationComponent() {
 
   return (
     <Flex pt="4" justifyContent="space-between">
-      <Button colorScheme="blue" h="1.75rem" size="lg" onClick={validate}>
+      <Button colorScheme="blue" h="1.75rem" size="md" onClick={validate}>
         Validate
       </Button>
       <Text>{msg}</Text>

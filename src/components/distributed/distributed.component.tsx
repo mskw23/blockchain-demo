@@ -12,7 +12,11 @@ export function DistributedComponent() {
   };
   return (
     <Flex direction="column">
-      <Flex pb="2" justifyContent="space-between" alignItems="center">
+      <Flex
+        pb="2"
+        justifyContent="space-between"
+        alignItems={["flex-start", "center"]}
+        flexDirection={["column", "row"]}>
         <Text>
           Based on{" "}
           <Link
@@ -22,7 +26,7 @@ export function DistributedComponent() {
             https://andersbrownworth.com/blockchain/
           </Link>{" "}
         </Text>
-        <Button onClick={reset} colorScheme="blue" size="sm">
+        <Button onClick={reset} colorScheme="blue" size="sm" mt={["2", 0]}>
           Reset
         </Button>
       </Flex>
