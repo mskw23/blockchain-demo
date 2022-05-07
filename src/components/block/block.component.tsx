@@ -52,7 +52,7 @@ export function BlockComponent({ block }: BlockComponentProps) {
     setValue("prev", block.prev);
     setValue("data", block.data);
   }, [block.hash, block.nonce, block.prev, block.data, setValue]);
-  const onChange = (a) => {
+  const onChange = (a: any) => {
     dispatch(
       blockchainActions.changeData({
         nodeId,

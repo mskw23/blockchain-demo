@@ -14,7 +14,7 @@ export function BlockchainComponent() {
   }
   const renderBlocks = () => {
     const arr = hashBlockchain(node);
-    return arr.map((block, index) => (
+    return arr.map((block: any, index: any) => (
       <Flex key={block.blockId} direction="column">
         <Block block={block} />
         {arr.length - 1 > index && (

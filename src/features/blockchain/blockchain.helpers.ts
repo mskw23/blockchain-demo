@@ -18,7 +18,7 @@ export const hashBlockchain = (node: Node) => {
   arr
     .slice()
     .reverse()
-    .forEach((x, index) => {
+    .forEach((x: any, index: any) => {
       const newArr = arr.slice().reverse();
       x.prev =
         typeof x.prev == "string" ? x.prev : newArr[index - 1]?.hash ?? "";
