@@ -6,37 +6,61 @@ import {
   Input,
   Textarea,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  blockchainActions,
+  selectPickedNode,
+  selectPickedNodeId,
+} from "../../features/blockchain";
+import { mineBlockchain } from "../../features/blockchain/blockchain.thunks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { getSHA256, isHashValid, mine } from "../../utils/functions";
 
-export type Block = {
+export type BlockProps = {
   blockId: number;
   nonce: number;
   data: string;
-  prev: string;
+  prev: string | null;
   hash: string;
 };
 
 type BlockComponentProps = {
-  block: Block;
+  block: BlockProps;
 };
 
 export function BlockComponent({ block }: BlockComponentProps) {
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, setValue, getValues, watch } = useForm<Block>(
-    {
+  const nodeId = useAppSelector(selectPickedNodeId);
+  const dispatch = useAppDispatch();
+  const { register, handleSubmit, setValue, getValues, watch } =
+    useForm<BlockProps>({
       defaultValues: block,
-    }
-  );
+    });
   const hash = watch("hash");
-  const onSubmit: SubmitHandler<Block> = async (data) => {
+  const onSubmit: SubmitHandler<BlockProps> = async (data) => {
     setLoading(true);
-    const newHash = await mine(block);
-    setLoading(false);
-    setValue("hash", newHash);
+    dispatch(
+      mineBlockchain({ block: data, blockId: block.blockId, nodeId })
+    ).then(() => {
+      setLoading(false);
+    });
   };
-  const onChange = () => setValue("hash", getSHA256(getValues()).toString());
+  useEffect(() => {
+    setValue("hash", block.hash);
+    setValue("nonce", block.nonce);
+    setValue("prev", block.prev);
+    setValue("data", block.data);
+  }, [block.hash, block.nonce, block.prev, block.data, setValue]);
+  const onChange = (a) => {
+    dispatch(
+      blockchainActions.changeData({
+        nodeId,
+        blockId: block.blockId,
+        data: a.target.value,
+      })
+    );
+  };
   return (
     <Box
       borderWidth="2px"
@@ -45,12 +69,22 @@ export function BlockComponent({ block }: BlockComponentProps) {
       p="4">
       <FormControl as="form" onSubmit={handleSubmit(onSubmit)}>
         <FormLabel htmlFor="blockId">Block number</FormLabel>
-        <Input {...register("blockId", { onChange })} type="number" />
+        <Input
+          {...register("blockId")}
+          _disabled={{ opacity: 1 }}
+          disabled
+          type="number"
+        />
 
         <FormLabel mt="4" htmlFor="nonce">
           Nonce
         </FormLabel>
-        <Input {...register("nonce", { onChange })} type="number" />
+        <Input
+          {...register("nonce")}
+          _disabled={{ opacity: 1 }}
+          disabled
+          type="number"
+        />
 
         <FormLabel mt="4" htmlFor="data">
           Data
@@ -60,12 +94,12 @@ export function BlockComponent({ block }: BlockComponentProps) {
         <FormLabel mt="4" htmlFor="prev">
           Previous hash
         </FormLabel>
-        <Input {...register("prev")} disabled />
+        <Input {...register("prev")} _disabled={{ opacity: 1 }} disabled />
 
         <FormLabel mt="4" htmlFor="hash">
           Hash
         </FormLabel>
-        <Input {...register("hash")} disabled />
+        <Input {...register("hash")} _disabled={{ opacity: 1 }} disabled />
 
         <Button isLoading={loading} mt="4" colorScheme="blue" type="submit">
           Mine
