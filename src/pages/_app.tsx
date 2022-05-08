@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <Header />
-        <Container paddingY="20">
+        <Container paddingTop="20">
           <Component {...pageProps} />
         </Container>
         <Footer />
